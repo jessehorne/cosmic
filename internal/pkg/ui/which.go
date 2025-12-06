@@ -8,6 +8,7 @@ import (
 
 type switcher interface {
 	TogglePlayingSong()
+	Stop()
 }
 
 type Which struct {
@@ -44,6 +45,7 @@ func (w *Which) Click() {
 	fmt.Println("toggled")
 	w.Toggled = !w.Toggled
 	w.switcher.TogglePlayingSong()
+	w.switcher.Stop()
 }
 
 func (w *Which) Update() {
@@ -90,5 +92,5 @@ func (w *Which) Draw() {
 }
 
 func (w *Which) Close() {
-	
+
 }
