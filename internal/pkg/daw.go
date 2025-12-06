@@ -25,6 +25,7 @@ type (
 
 	metronome interface {
 		Tick()
+		Reset()
 	}
 )
 
@@ -40,6 +41,10 @@ func (d *DAW) SetMetronome(m metronome) {
 
 func (d *DAW) Update() {
 	if d.Playing {
+		if d.PlayTime == 0 {
+			d.TickMetronome()
+		}
+
 		// increment play time, beat counter and current beat
 		d.PlayTime += rl.GetFrameTime()
 		d.BeatCounter += rl.GetFrameTime()
@@ -79,10 +84,13 @@ func (d *DAW) Pause() {
 func (d *DAW) Stop() {
 	d.Playing = false
 	d.ResetTime()
+	d.ResetMetronome()
 	fmt.Println("stopped")
 }
 
 func (d *DAW) ResetTime() {
+	d.PlayTime = 0
+	d.BeatCounter = 0
 	fmt.Println("reset time...TODO")
 }
 
@@ -97,11 +105,15 @@ func (d *DAW) ToggleMetronome() {
 }
 
 func (d *DAW) TickMetronome() {
-	fmt.Println("tick")
-
 	if d.Metronome == nil {
 		return
 	}
-
 	d.Metronome.Tick()
+}
+
+func (d *DAW) ResetMetronome() {
+	if d.Metronome == nil {
+		return
+	}
+	d.Metronome.Reset()
 }

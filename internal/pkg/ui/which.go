@@ -88,3 +88,7 @@ func (w *Which) Draw() {
 		rl.DrawText("P", startX-2, centerY-5, 14, rl.Black)
 	}
 }
+
+func (w *Which) Close() {
+	
+}

@@ -22,8 +22,12 @@ type Metronome struct {
 	// a "tick" in this case is if the color of an active metronome is changed
 	// from skyblue to white. The DAW will "tick" the metronome once per beat.
 	// when ticking is done, the color goes back to skyblue.
-	Ticking        bool // if triggered to tick for this beat (this happens once per beat)
-	TickingCounter float32
+	Ticking          bool // if triggered to tick for this beat (this happens once per beat)
+	TickingCounter   float32
+	TickSoundCounter int
+
+	Sound1 rl.Sound
+	Sound2 rl.Sound
 }
 
 func NewMetronome(t toggler) *Metronome {
@@ -33,6 +37,8 @@ func NewMetronome(t toggler) *Metronome {
 		W:       30,
 		H:       30,
 		toggler: t,
+		Sound1:  rl.LoadSound("data/metronome-1.ogg"),
+		Sound2:  rl.LoadSound("data/metronome-2.ogg"),
 	}
 }
 
@@ -87,4 +93,26 @@ func (m *Metronome) Draw() {
 
 func (m *Metronome) Tick() {
 	m.Ticking = true
+
+	if m.Toggled {
+		if m.TickSoundCounter == 0 {
+			rl.PlaySound(m.Sound2)
+		} else {
+			rl.PlaySound(m.Sound1)
+		}
+	}
+
+	m.TickSoundCounter += 1
+	if m.TickSoundCounter > 3 {
+		m.TickSoundCounter = 0
+	}
+}
+
+func (m *Metronome) Reset() {
+	m.TickSoundCounter = 0
+}
+
+func (m *Metronome) Close() {
+	rl.UnloadSound(m.Sound1)
+	rl.UnloadSound(m.Sound2)
 }

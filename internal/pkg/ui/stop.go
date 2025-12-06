@@ -49,3 +49,7 @@ func (s *Stop) Draw() {
 		s.Click()
 	}
 }
+
+func (s *Stop) Close() {
+
+}

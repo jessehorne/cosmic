@@ -49,3 +49,7 @@ func (p *Play) Draw() {
 		p.Click()
 	}
 }
+
+func (p *Play) Close() {
+
+}

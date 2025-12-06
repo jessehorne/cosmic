@@ -6,4 +6,5 @@ type Widget interface {
 	GetBounds() rl.Rectangle
 	Update()
 	Draw()
+	Close()
 }

@@ -96,3 +96,7 @@ func (b *Bpm) Draw() {
 		false,
 	)
 }
+
+func (b *Bpm) Close() {
+
+}

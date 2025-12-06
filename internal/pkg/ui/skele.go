@@ -49,3 +49,7 @@ func (s *Skele) Draw() {
 		s.Click()
 	}
 }
+
+func (s *Skele) Close() {
+
+}

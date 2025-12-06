@@ -16,6 +16,7 @@ func main() {
 	defer rl.CloseWindow()
 
 	rl.SetTargetFPS(60)
+	rl.InitAudioDevice()
 
 	daw := pkg.NewDAW()
 
@@ -46,13 +47,15 @@ func main() {
 		for _, w := range widgets {
 			w.Update()
 			w.Draw()
-
-			// reset styles
-			//gui.SetStyle(gui.DEFAULT, gui.TEXT_SIZE, gui.GetStyle(gui.DEFAULT, gui.TEXT_SIZE))
 		}
 
 		rl.EndDrawing()
 	}
 
+	for _, w := range widgets {
+		w.Close()
+	}
+
+	rl.CloseAudioDevice()
 	rl.CloseWindow()
 }
