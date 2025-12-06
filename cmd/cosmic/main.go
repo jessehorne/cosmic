@@ -12,11 +12,12 @@ const (
 )
 
 func main() {
-	rl.InitWindow(screenWidth, screenHeight, "cosmic v0.0.1")
-	defer rl.CloseWindow()
-
 	rl.SetTargetFPS(60)
 	rl.InitAudioDevice()
+	rl.SetConfigFlags(rl.FlagWindowTransparent)
+
+	rl.InitWindow(screenWidth, screenHeight, "cosmic v0.0.1")
+	defer rl.CloseWindow()
 
 	daw := pkg.NewDAW()
 
@@ -38,9 +39,8 @@ func main() {
 	daw.SetMetronome(metronome)
 
 	for !rl.WindowShouldClose() {
-		// --- 2. Drawing Phase ---
 		rl.BeginDrawing()
-		rl.ClearBackground(rl.RayWhite)
+		rl.ClearBackground(rl.Color{R: 0, G: 0, B: 0, A: 150})
 
 		daw.Update()
 
