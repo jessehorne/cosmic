@@ -17,13 +17,17 @@ func main() {
 
 	rl.SetTargetFPS(60)
 
-	// ▶, ◼,
-
 	daw := pkg.NewDAW()
 
+	playButton := ui.NewPlay(daw)
+	pauseButton := ui.NewPause(daw)
+	stopButton := ui.NewStop(daw)
 	bpmCounter := ui.NewBpm(daw)
 
 	var widgets []ui.Widget
+	widgets = append(widgets, playButton)
+	widgets = append(widgets, pauseButton)
+	widgets = append(widgets, stopButton)
 	widgets = append(widgets, bpmCounter)
 
 	for !rl.WindowShouldClose() {

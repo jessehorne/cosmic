@@ -28,7 +28,7 @@ type Bpm struct {
 
 func NewBpm(bpm bpmSetter) *Bpm {
 	b := &Bpm{
-		X:         0,
+		X:         90,
 		Y:         0,
 		W:         60,
 		H:         30,
@@ -82,6 +82,8 @@ func (b *Bpm) Update() {
 			b.Scroll(int(scroll), rl.IsKeyDown(rl.KeyLeftShift))
 		}
 	}
+
+	b.UpdateBounds()
 }
 
 func (b *Bpm) Draw() {
