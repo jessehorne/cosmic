@@ -8,8 +8,9 @@ const (
 )
 
 type DAW struct {
-	BPM     int
-	Playing bool
+	BPM         int
+	Playing     bool
+	PlayingSong bool // playing pattern if false, song if true
 }
 
 func NewDAW() *DAW {
@@ -47,4 +48,9 @@ func (d *DAW) Stop() {
 
 func (d *DAW) ResetTime() {
 	fmt.Println("reset time...TODO")
+}
+
+func (d *DAW) TogglePlayingSong() {
+	d.PlayingSong = !d.PlayingSong
+	fmt.Println("toggled between pattern and song", d.PlayingSong)
 }

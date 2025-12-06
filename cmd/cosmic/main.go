@@ -23,12 +23,14 @@ func main() {
 	pauseButton := ui.NewPause(daw)
 	stopButton := ui.NewStop(daw)
 	bpmCounter := ui.NewBpm(daw)
+	which := ui.NewWhich(daw)
 
 	var widgets []ui.Widget
 	widgets = append(widgets, playButton)
 	widgets = append(widgets, pauseButton)
 	widgets = append(widgets, stopButton)
 	widgets = append(widgets, bpmCounter)
+	widgets = append(widgets, which)
 
 	for !rl.WindowShouldClose() {
 		// --- 2. Drawing Phase ---
