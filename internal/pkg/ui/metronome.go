@@ -10,11 +10,7 @@ type toggler interface {
 }
 
 type Metronome struct {
-	X       int32
-	Y       int32
-	W       int32
-	H       int32
-	Bounds  rl.Rectangle
+	Core
 	Toggled bool
 	toggler toggler
 
@@ -31,31 +27,20 @@ type Metronome struct {
 }
 
 func NewMetronome(t toggler) *Metronome {
-	m := &Metronome{
-		W:       30,
-		H:       30,
+	return &Metronome{
+		Core:    NewCore(rl.NewRectangle(0, 0, 30, 30)),
 		toggler: t,
 		Sound1:  rl.LoadSound("data/metronome-1.ogg"),
 		Sound2:  rl.LoadSound("data/metronome-2.ogg"),
 	}
-	m.UpdateBounds()
-	return m
 }
 
 func (m *Metronome) GetBounds() rl.Rectangle {
-	return m.Bounds
+	return m.Core.Bounds
 }
 
 func (m *Metronome) SetBounds(r rl.Rectangle) {
-	m.Bounds = r
-	m.X = int32(m.Bounds.X)
-	m.Y = int32(m.Bounds.Y)
-	m.W = int32(m.Bounds.Width)
-	m.H = int32(m.Bounds.Height)
-}
-
-func (m *Metronome) UpdateBounds() {
-	m.Bounds = rl.NewRectangle(float32(m.X), float32(m.Y), float32(m.W), float32(m.H))
+	m.Core.Bounds = r
 }
 
 func (m *Metronome) Click() {
@@ -64,8 +49,6 @@ func (m *Metronome) Click() {
 }
 
 func (m *Metronome) Update() {
-	m.UpdateBounds()
-
 	// if ticking, increment ticking counter and reset to 0 if it goes over .1
 	// (a tenth of a second)
 	if m.Ticking {
@@ -86,16 +69,17 @@ func (m *Metronome) Update() {
 }
 
 func (m *Metronome) Draw() {
-	rl.DrawRectangle(m.X, m.Y, m.W, m.H, rl.Gray)
+	x, y, w, h := m.Core.UnpackInt32()
+	rl.DrawRectangle(x, y, w, h, rl.Gray)
 	if m.Toggled {
 		color := rl.SkyBlue
 		if m.Ticking {
 			color = rl.White
 		}
-		rl.DrawRectangle(m.X+2, m.Y+2, m.W-4, m.H-4, color)
+		rl.DrawRectangle(x+2, y+2, w-4, h-4, color)
 	}
 	gui.Label(
-		rl.NewRectangle(float32(m.X+6), float32(m.Y), float32(m.W), float32(m.H)),
+		rl.NewRectangle(float32(x+6), float32(y), float32(w), float32(h)),
 		gui.IconText(gui.ICON_CLOCK, ""))
 }
 

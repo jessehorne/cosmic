@@ -17,40 +17,25 @@ const (
 )
 
 type Bpm struct {
-	X         int32
-	Y         int32
-	W         int32
-	H         int32
+	Core
 	Value     int32
-	Bounds    rl.Rectangle
 	bpmSetter bpmSetter
 }
 
 func NewBpm(bpm bpmSetter) *Bpm {
-	b := &Bpm{
-		W:         60,
-		H:         30,
+	return &Bpm{
+		Core:      NewCore(rl.NewRectangle(0, 0, 60, 30)),
 		bpmSetter: bpm,
 		Value:     80,
 	}
-	b.UpdateBounds()
-	return b
-}
-
-func (b *Bpm) UpdateBounds() {
-	b.Bounds = rl.NewRectangle(float32(b.X), float32(b.Y), float32(b.W), float32(b.H))
 }
 
 func (b *Bpm) GetBounds() rl.Rectangle {
-	return b.Bounds
+	return b.Core.Bounds
 }
 
 func (b *Bpm) SetBounds(r rl.Rectangle) {
-	b.Bounds = r
-	b.X = int32(b.Bounds.X)
-	b.Y = int32(b.Bounds.Y)
-	b.W = int32(b.Bounds.Width)
-	b.H = int32(b.Bounds.Height)
+	b.Core.Bounds = r
 }
 
 func (b *Bpm) Scroll(direction int, isHoldingShift bool) {
@@ -79,7 +64,7 @@ func (b *Bpm) IncrementBPM(up, multi bool) {
 
 func (b *Bpm) Update() {
 	// check if hovering widget
-	mouseHovering := rl.CheckCollisionPointRec(rl.GetMousePosition(), b.GetBounds())
+	mouseHovering := rl.CheckCollisionPointRec(rl.GetMousePosition(), b.Core.Bounds)
 
 	if mouseHovering {
 		// check if scrolling
@@ -88,8 +73,6 @@ func (b *Bpm) Update() {
 			b.Scroll(int(scroll), rl.IsKeyDown(rl.KeyLeftShift))
 		}
 	}
-
-	b.UpdateBounds()
 }
 
 func (b *Bpm) Draw() {

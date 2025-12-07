@@ -1,28 +1,27 @@
 package ui
 
 import (
-	"fmt"
-
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 type Knob struct {
-	X      int32
-	Y      int32
-	W      int32
-	H      int32
-	Value  int // should always be 1-100
-	Bounds rl.Rectangle
+	Core
+	Value int // should always be 1-100
 }
 
-func NewKnob(x, y, w, h, value int32) *Knob {
-	k := &Knob{
-		W:     w,
-		H:     h,
+func NewKnob(x, y, w, h float32, value int32) *Knob {
+	return &Knob{
+		Core:  NewCore(rl.NewRectangle(x, y, w, h)),
 		Value: int(value),
 	}
-	k.UpdateBounds()
-	return k
+}
+
+func (k *Knob) GetBounds() rl.Rectangle {
+	return k.Core.Bounds
+}
+
+func (k *Knob) SetBounds(r rl.Rectangle) {
+	k.Core.Bounds = r
 }
 
 func (k *Knob) GetValue() int {
@@ -36,39 +35,23 @@ func (k *Knob) SetValue(i int) {
 	k.Value = i
 }
 
-func (k *Knob) GetBounds() rl.Rectangle {
-	return k.Bounds
-}
-
-func (k *Knob) SetBounds(r rl.Rectangle) {
-	k.Bounds = r
-	k.X = int32(k.Bounds.X)
-	k.Y = int32(k.Bounds.Y)
-	k.W = int32(k.Bounds.Width)
-	k.H = int32(k.Bounds.Height)
-}
-
-func (k *Knob) UpdateBounds() {
-	k.Bounds = rl.NewRectangle(float32(k.X), float32(k.Y), float32(k.W), float32(k.H))
-}
-
 func (k *Knob) Click() {
 
 }
 
 func (k *Knob) Update() {
-	k.UpdateBounds()
+
 }
 
 func (k *Knob) Draw() {
-	fmt.Println("test")
+	x, y, w, h := k.UnpackInt32()
 	// draw background square
-	rl.DrawRectangle(k.X, k.Y, k.W, k.H, rl.Gray)
+	rl.DrawRectangle(x, y, w, h, rl.Gray)
 
 	// draw knob circle
-	centerX := k.X + k.H/2
-	centerY := k.Y + k.H/2
-	rl.DrawCircle(centerX, centerY, float32(k.W-4), rl.White)
+	centerX := x + w/2
+	centerY := y + y/2
+	rl.DrawCircle(centerX, centerY, float32(w-4), rl.White)
 }
 
 func (k *Knob) Close() {

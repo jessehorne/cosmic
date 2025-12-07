@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"fmt"
-
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -12,51 +10,33 @@ type switcher interface {
 }
 
 type Which struct {
-	X        int32
-	Y        int32
-	W        int32
-	H        int32
-	Bounds   rl.Rectangle
+	Core
 	Toggled  bool
 	switcher switcher
 }
 
 func NewWhich(s switcher) *Which {
-	w := &Which{
-		W:        60,
-		H:        30,
+	return &Which{
+		Core:     NewCore(rl.NewRectangle(0, 0, 60, 30)),
 		switcher: s,
 	}
-	w.UpdateBounds()
-	return w
 }
 
 func (w *Which) GetBounds() rl.Rectangle {
-	return w.Bounds
+	return w.Core.Bounds
 }
 
 func (w *Which) SetBounds(r rl.Rectangle) {
-	w.Bounds = r
-	w.X = int32(w.Bounds.X)
-	w.Y = int32(w.Bounds.Y)
-	w.W = int32(w.Bounds.Width)
-	w.H = int32(w.Bounds.Height)
-}
-
-func (w *Which) UpdateBounds() {
-	w.Bounds = rl.NewRectangle(float32(w.X), float32(w.Y), float32(w.W), float32(w.H))
+	w.Core.Bounds = r
 }
 
 func (w *Which) Click() {
-	fmt.Println("toggled")
 	w.Toggled = !w.Toggled
 	w.switcher.TogglePlayingSong()
 	w.switcher.Stop()
 }
 
 func (w *Which) Update() {
-	w.UpdateBounds()
-
 	isMouseOver := rl.CheckCollisionPointRec(rl.GetMousePosition(), w.Bounds)
 	isLeftClick := rl.IsMouseButtonPressed(rl.MouseLeftButton)
 
@@ -66,25 +46,27 @@ func (w *Which) Update() {
 }
 
 func (w *Which) Draw() {
+	x, y, width, h := w.Core.UnpackInt32()
+
 	// first circle
-	rad := int32(w.H / 2)
-	centerY := int32(w.Y) + rad
-	startX := int32(w.X) + rad
+	rad := h / 2
+	centerY := y + rad
+	startX := x + rad
 	rl.DrawCircle(startX, centerY, float32(rad), rl.Gray)
 
 	// second circle
-	startX2 := int32(w.X+w.W) - rad
+	startX2 := x + width - rad
 	rl.DrawCircle(startX2, centerY, float32(rad), rl.Gray)
 
 	// draw background rectangle
 	rectWidth := startX2 - startX
-	rl.DrawRectangle(startX, int32(w.Y), rectWidth, int32(w.H), rl.Gray)
+	rl.DrawRectangle(startX, y, rectWidth, h, rl.Gray)
 
 	if w.Toggled {
 		// draw toggle button on right side with background rect showing toggled
 		rl.DrawCircle(startX+2, centerY, float32(rad-2), rl.SkyBlue)
 
-		rl.DrawRectangle(startX+2, int32(w.Y+2), rectWidth-4, int32(w.H-4),
+		rl.DrawRectangle(startX+2, y+2, rectWidth-4, h-4,
 			rl.SkyBlue)
 
 		rl.DrawCircle(startX2-2, centerY, float32(rad-2), rl.White)

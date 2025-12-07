@@ -53,13 +53,39 @@ func NewDAW() *DAW {
 		BPM: 80,
 	}
 
-	playButton := ui.NewPlay(d)
-	pauseButton := ui.NewPause(d)
-	stopButton := ui.NewStop(d)
+	playButton := ui.NewButton(
+		rl.NewRectangle(0, 0, 30, 30),
+		gui.ICON_PLAYER_PLAY,
+		func() {
+			d.Play()
+		},
+	)
+	pauseButton := ui.NewButton(
+		rl.NewRectangle(0, 0, 30, 30),
+		gui.ICON_PLAYER_PAUSE,
+		func() {
+			d.Pause()
+		},
+	)
+	stopButton := ui.NewButton(
+		rl.NewRectangle(0, 0, 30, 30),
+		gui.ICON_PLAYER_STOP,
+		func() {
+			d.Stop()
+		},
+	)
 	bpmCounter := ui.NewBpm(d)
+
 	which := ui.NewWhich(d)
 	m := ui.NewMetronome(d)
-	addStepButton := ui.NewAddStep()
+	
+	addStepButton := ui.NewButton(
+		rl.NewRectangle(0, 0, 30, 30),
+		gui.ICON_STEP_INTO,
+		func() {
+			// TODO
+		},
+	)
 
 	hOrganizer := ui.NewOrganizer()
 
@@ -97,7 +123,7 @@ func (d *DAW) Update() {
 
 		gui.SetState(gui.STATE_NORMAL)
 	}
-	
+
 	if d.Playing {
 		if d.PlayTime == 0 {
 			d.TickMetronome()
