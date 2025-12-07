@@ -1,9 +1,12 @@
 package main
 
 import (
+	"log"
+
 	gui "github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/jessehorne/cosmic/internal/pkg"
+	"github.com/jessehorne/cosmic/internal/pkg/save"
 	"github.com/jessehorne/cosmic/internal/pkg/ui"
 )
 
@@ -13,6 +16,14 @@ const (
 )
 
 func main() {
+	// create save file if not exists
+	err := save.CreateSaveIfNotExists()
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	// init raylib stuff
 	rl.SetTargetFPS(60)
 	rl.InitAudioDevice()
 	rl.SetConfigFlags(rl.FlagWindowTransparent)
@@ -51,7 +62,7 @@ func main() {
 		for _, w := range widgets {
 			w.Update()
 			w.Draw()
-			
+
 			gui.SetState(gui.STATE_NORMAL)
 		}
 		rl.EndDrawing()
