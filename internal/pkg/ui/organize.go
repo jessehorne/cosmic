@@ -22,8 +22,8 @@ func (o *Organizer) AddWidget(w Widget) Widget {
 func (o *Organizer) SimpleHorizontal() {
 	var lastX float32 = 0.0
 	for _, w := range o.Widgets {
-		b := w.GetBounds()
-		w.SetBounds(rl.NewRectangle(lastX, b.Y, b.Width, b.Height))
+		b := w.GetCore().Bounds
+		w.GetCore().SetBounds(rl.NewRectangle(lastX, b.Y, b.Width, b.Height))
 		lastX += b.X + b.Width
 	}
 }

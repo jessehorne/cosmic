@@ -10,7 +10,7 @@ type switcher interface {
 }
 
 type Which struct {
-	Core
+	*Core
 	Toggled  bool
 	switcher switcher
 }
@@ -22,12 +22,8 @@ func NewWhich(s switcher) *Which {
 	}
 }
 
-func (w *Which) GetBounds() rl.Rectangle {
-	return w.Core.Bounds
-}
-
-func (w *Which) SetBounds(r rl.Rectangle) {
-	w.Core.Bounds = r
+func (w *Which) GetCore() *Core {
+	return w.Core
 }
 
 func (w *Which) Click() {

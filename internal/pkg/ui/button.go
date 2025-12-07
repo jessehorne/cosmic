@@ -6,7 +6,7 @@ import (
 )
 
 type Button struct {
-	Core
+	*Core
 	Toggled  bool
 	Callback func()
 	Icon     int32
@@ -20,12 +20,8 @@ func NewButton(b rl.Rectangle, icon int32, callback func()) *Button {
 	}
 }
 
-func (b *Button) GetBounds() rl.Rectangle {
-	return b.Core.Bounds
-}
-
-func (b *Button) SetBounds(r rl.Rectangle) {
-	b.Core.Bounds = r
+func (b *Button) GetCore() *Core {
+	return b.Core
 }
 
 func (b *Button) Click() {

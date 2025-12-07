@@ -5,7 +5,7 @@ import (
 )
 
 type Knob struct {
-	Core
+	*Core
 	Value int // should always be 1-100
 }
 
@@ -16,12 +16,8 @@ func NewKnob(x, y, w, h float32, value int32) *Knob {
 	}
 }
 
-func (k *Knob) GetBounds() rl.Rectangle {
-	return k.Core.Bounds
-}
-
-func (k *Knob) SetBounds(r rl.Rectangle) {
-	k.Core.Bounds = r
+func (k *Knob) GetCore() *Core {
+	return k.Core
 }
 
 func (k *Knob) GetValue() int {

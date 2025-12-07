@@ -5,7 +5,7 @@ import (
 )
 
 type Stepper struct {
-	Core
+	*Core
 	Widgets map[string]Widget
 }
 
@@ -22,12 +22,8 @@ func NewStepper() *Stepper {
 	}
 }
 
-func (s *Stepper) GetBounds() rl.Rectangle {
-	return s.Bounds
-}
-
-func (s *Stepper) SetBounds(r rl.Rectangle) {
-	s.Core.Bounds = r
+func (s *Stepper) GetCore() *Core {
+	return s.Core
 }
 
 func (s *Stepper) Click() {

@@ -10,7 +10,7 @@ type toggler interface {
 }
 
 type Metronome struct {
-	Core
+	*Core
 	Toggled bool
 	toggler toggler
 
@@ -35,12 +35,8 @@ func NewMetronome(t toggler) *Metronome {
 	}
 }
 
-func (m *Metronome) GetBounds() rl.Rectangle {
-	return m.Core.Bounds
-}
-
-func (m *Metronome) SetBounds(r rl.Rectangle) {
-	m.Core.Bounds = r
+func (m *Metronome) GetCore() *Core {
+	return m.Core
 }
 
 func (m *Metronome) Click() {

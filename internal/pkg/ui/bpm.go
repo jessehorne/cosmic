@@ -17,7 +17,7 @@ const (
 )
 
 type Bpm struct {
-	Core
+	*Core
 	Value     int32
 	bpmSetter bpmSetter
 }
@@ -30,12 +30,8 @@ func NewBpm(bpm bpmSetter) *Bpm {
 	}
 }
 
-func (b *Bpm) GetBounds() rl.Rectangle {
-	return b.Core.Bounds
-}
-
-func (b *Bpm) SetBounds(r rl.Rectangle) {
-	b.Core.Bounds = r
+func (b *Bpm) GetCore() *Core {
+	return b.Core
 }
 
 func (b *Bpm) Scroll(direction int, isHoldingShift bool) {

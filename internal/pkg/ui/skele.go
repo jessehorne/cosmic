@@ -6,7 +6,7 @@ import (
 )
 
 type Skele struct {
-	Core
+	*Core
 }
 
 func NewSkele() *Skele {
@@ -15,12 +15,8 @@ func NewSkele() *Skele {
 	}
 }
 
-func (s *Skele) GetBounds() rl.Rectangle {
-	return s.Core.Bounds
-}
-
-func (s *Skele) SetBounds(r rl.Rectangle) {
-	s.Core.Bounds = r
+func (s *Skele) GetCore() *Core {
+	return s.Core
 }
 
 func (s *Skele) Click() {
