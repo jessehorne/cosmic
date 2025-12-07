@@ -10,12 +10,13 @@ type pauser interface {
 }
 
 type Pause struct {
-	X      int
-	Y      int
-	W      int
-	H      int
-	Bounds rl.Rectangle
-	pauser pauser
+	X       int
+	Y       int
+	W       int
+	H       int
+	Toggled bool
+	Bounds  rl.Rectangle
+	pauser  pauser
 }
 
 func NewPause(p pauser) *Pause {
@@ -40,11 +41,18 @@ func (p *Pause) Click() {
 	p.pauser.Pause()
 }
 
+func (p *Pause) SetToggle(w bool) {
+	p.Toggled = w
+}
+
 func (p *Pause) Update() {
 	p.UpdateBounds()
 }
 
 func (p *Pause) Draw() {
+	if p.Toggled {
+		gui.SetState(gui.STATE_FOCUSED)
+	}
 	if gui.Button(p.Bounds, gui.IconText(gui.ICON_PLAYER_PAUSE, "")) {
 		p.Click()
 	}

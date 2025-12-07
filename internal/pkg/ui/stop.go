@@ -40,6 +40,10 @@ func (s *Stop) Click() {
 	s.stopper.Stop()
 }
 
+func (s *Stop) SetToggle(w bool) {
+	
+}
+
 func (s *Stop) Update() {
 	s.UpdateBounds()
 }

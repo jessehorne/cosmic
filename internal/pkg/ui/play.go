@@ -10,12 +10,13 @@ type player interface {
 }
 
 type Play struct {
-	X      int
-	Y      int
-	W      int
-	H      int
-	Bounds rl.Rectangle
-	player player
+	X       int
+	Y       int
+	W       int
+	H       int
+	Toggled bool
+	Bounds  rl.Rectangle
+	player  player
 }
 
 func NewPlay(p player) *Play {
@@ -40,11 +41,18 @@ func (p *Play) Click() {
 	p.player.Play()
 }
 
+func (p *Play) SetToggle(w bool) {
+	p.Toggled = w
+}
+
 func (p *Play) Update() {
 	p.UpdateBounds()
 }
 
 func (p *Play) Draw() {
+	if p.Toggled {
+		gui.SetState(gui.STATE_FOCUSED)
+	}
 	if gui.Button(p.Bounds, gui.IconText(gui.ICON_PLAYER_PLAY, "")) {
 		p.Click()
 	}

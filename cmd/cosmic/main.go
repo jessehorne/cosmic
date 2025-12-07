@@ -1,6 +1,7 @@
 package main
 
 import (
+	gui "github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/jessehorne/cosmic/internal/pkg"
 	"github.com/jessehorne/cosmic/internal/pkg/ui"
@@ -38,6 +39,7 @@ func main() {
 
 	daw.SetMetronome(metronome)
 	daw.SetPlayButton(playButton)
+	daw.SetPauseButton(pauseButton)
 	daw.SetStopButton(stopButton)
 
 	for !rl.WindowShouldClose() {
@@ -49,8 +51,9 @@ func main() {
 		for _, w := range widgets {
 			w.Update()
 			w.Draw()
+			
+			gui.SetState(gui.STATE_NORMAL)
 		}
-
 		rl.EndDrawing()
 	}
 

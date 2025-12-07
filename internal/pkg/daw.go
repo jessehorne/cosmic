@@ -18,9 +18,10 @@ type (
 		PlayingSong      bool // playing pattern if false, song if true
 		MetronomeToggled bool // if the metronome should play during song
 
-		Metronome  metronome
-		PlayButton button
-		StopButton button
+		Metronome   metronome
+		PlayButton  button
+		PauseButton button
+		StopButton  button
 
 		PlayTime    float32 // current play time in seconds
 		BeatCounter float32
@@ -34,6 +35,7 @@ type (
 
 	button interface {
 		Click()
+		SetToggle(w bool)
 	}
 )
 
@@ -49,6 +51,10 @@ func (d *DAW) SetMetronome(m metronome) {
 
 func (d *DAW) SetPlayButton(pb button) {
 	d.PlayButton = pb
+}
+
+func (d *DAW) SetPauseButton(pb button) {
+	d.PauseButton = pb
 }
 
 func (d *DAW) SetStopButton(sb button) {
@@ -81,6 +87,7 @@ func (d *DAW) Update() {
 			if d.StopButton != nil {
 				d.StopButton.Click()
 			}
+			d.PlayButton.SetToggle(false)
 		} else {
 			if d.PlayButton != nil {
 				d.PlayButton.Click()
@@ -102,10 +109,28 @@ func (d *DAW) SetBPM(bpm int) {
 
 func (d *DAW) Play() {
 	d.Playing = true
+
+	if d.PauseButton != nil {
+		d.PauseButton.SetToggle(false)
+	}
+
+	if d.PlayButton != nil {
+		d.PlayButton.SetToggle(true)
+	}
+
 	fmt.Println("playing")
 }
 
 func (d *DAW) Pause() {
+	if d.Playing {
+		if d.PauseButton != nil {
+			d.PauseButton.SetToggle(true)
+		}
+		if d.PlayButton != nil {
+			d.PlayButton.SetToggle(false)
+		}
+	}
+
 	d.Playing = false
 	fmt.Println("paused")
 }
@@ -114,6 +139,14 @@ func (d *DAW) Stop() {
 	d.Playing = false
 	d.ResetTime()
 	d.ResetMetronome()
+
+	if d.PauseButton != nil {
+		d.PauseButton.SetToggle(false)
+	}
+
+	if d.PlayButton != nil {
+		d.PlayButton.SetToggle(false)
+	}
 	fmt.Println("stopped")
 }
 
