@@ -47,7 +47,7 @@ func (as *AddStep) Update() {
 }
 
 func (as *AddStep) Draw() {
-	if gui.Button(as.Bounds, gui.IconText(gui.ICON_CROSS, "")) {
+	if gui.Button(as.Bounds, gui.IconText(gui.ICON_STEP_INTO, "")) {
 		as.Click()
 	}
 }
