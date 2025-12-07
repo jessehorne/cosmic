@@ -31,19 +31,27 @@ type Metronome struct {
 }
 
 func NewMetronome(t toggler) *Metronome {
-	return &Metronome{
-		X:       210,
-		Y:       0,
+	m := &Metronome{
 		W:       30,
 		H:       30,
 		toggler: t,
 		Sound1:  rl.LoadSound("data/metronome-1.ogg"),
 		Sound2:  rl.LoadSound("data/metronome-2.ogg"),
 	}
+	m.UpdateBounds()
+	return m
 }
 
 func (m *Metronome) GetBounds() rl.Rectangle {
 	return m.Bounds
+}
+
+func (m *Metronome) SetBounds(r rl.Rectangle) {
+	m.Bounds = r
+	m.X = int32(m.Bounds.X)
+	m.Y = int32(m.Bounds.Y)
+	m.W = int32(m.Bounds.Width)
+	m.H = int32(m.Bounds.Height)
 }
 
 func (m *Metronome) UpdateBounds() {

@@ -17,10 +17,10 @@ const (
 )
 
 type Bpm struct {
-	X         int
-	Y         int
-	W         int
-	H         int
+	X         int32
+	Y         int32
+	W         int32
+	H         int32
 	Value     int32
 	Bounds    rl.Rectangle
 	bpmSetter bpmSetter
@@ -28,8 +28,6 @@ type Bpm struct {
 
 func NewBpm(bpm bpmSetter) *Bpm {
 	b := &Bpm{
-		X:         90,
-		Y:         0,
 		W:         60,
 		H:         30,
 		bpmSetter: bpm,
@@ -45,6 +43,14 @@ func (b *Bpm) UpdateBounds() {
 
 func (b *Bpm) GetBounds() rl.Rectangle {
 	return b.Bounds
+}
+
+func (b *Bpm) SetBounds(r rl.Rectangle) {
+	b.Bounds = r
+	b.X = int32(b.Bounds.X)
+	b.Y = int32(b.Bounds.Y)
+	b.W = int32(b.Bounds.Width)
+	b.H = int32(b.Bounds.Height)
 }
 
 func (b *Bpm) Scroll(direction int, isHoldingShift bool) {

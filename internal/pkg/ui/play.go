@@ -10,27 +10,35 @@ type player interface {
 }
 
 type Play struct {
-	X       int
-	Y       int
-	W       int
-	H       int
+	X       int32
+	Y       int32
+	W       int32
+	H       int32
 	Toggled bool
 	Bounds  rl.Rectangle
 	player  player
 }
 
 func NewPlay(p player) *Play {
-	return &Play{
-		X:      0,
-		Y:      0,
+	play := &Play{
 		W:      30,
 		H:      30,
 		player: p,
 	}
+	play.UpdateBounds()
+	return play
 }
 
 func (p *Play) GetBounds() rl.Rectangle {
 	return p.Bounds
+}
+
+func (p *Play) SetBounds(r rl.Rectangle) {
+	p.Bounds = r
+	p.X = int32(p.Bounds.X)
+	p.Y = int32(p.Bounds.Y)
+	p.W = int32(p.Bounds.Width)
+	p.H = int32(p.Bounds.Height)
 }
 
 func (p *Play) UpdateBounds() {

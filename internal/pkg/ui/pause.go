@@ -10,27 +10,35 @@ type pauser interface {
 }
 
 type Pause struct {
-	X       int
-	Y       int
-	W       int
-	H       int
+	X       int32
+	Y       int32
+	W       int32
+	H       int32
 	Toggled bool
 	Bounds  rl.Rectangle
 	pauser  pauser
 }
 
 func NewPause(p pauser) *Pause {
-	return &Pause{
-		X:      30,
-		Y:      0,
+	pa := &Pause{
 		W:      30,
 		H:      30,
 		pauser: p,
 	}
+	pa.UpdateBounds()
+	return pa
 }
 
 func (p *Pause) GetBounds() rl.Rectangle {
 	return p.Bounds
+}
+
+func (p *Pause) SetBounds(r rl.Rectangle) {
+	p.Bounds = r
+	p.X = int32(p.Bounds.X)
+	p.Y = int32(p.Bounds.Y)
+	p.W = int32(p.Bounds.Width)
+	p.H = int32(p.Bounds.Height)
 }
 
 func (p *Pause) UpdateBounds() {

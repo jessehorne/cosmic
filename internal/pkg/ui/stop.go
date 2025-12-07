@@ -10,26 +10,34 @@ type stopper interface {
 }
 
 type Stop struct {
-	X       int
-	Y       int
-	W       int
-	H       int
+	X       int32
+	Y       int32
+	W       int32
+	H       int32
 	Bounds  rl.Rectangle
 	stopper stopper
 }
 
 func NewStop(s stopper) *Stop {
-	return &Stop{
-		X:       60,
-		Y:       0,
+	stop := &Stop{
 		W:       30,
 		H:       30,
 		stopper: s,
 	}
+	stop.UpdateBounds()
+	return stop
 }
 
 func (s *Stop) GetBounds() rl.Rectangle {
 	return s.Bounds
+}
+
+func (s *Stop) SetBounds(r rl.Rectangle) {
+	s.Bounds = r
+	s.X = int32(s.Bounds.X)
+	s.Y = int32(s.Bounds.Y)
+	s.W = int32(s.Bounds.Width)
+	s.H = int32(s.Bounds.Height)
 }
 
 func (s *Stop) UpdateBounds() {
@@ -41,7 +49,7 @@ func (s *Stop) Click() {
 }
 
 func (s *Stop) SetToggle(w bool) {
-	
+
 }
 
 func (s *Stop) Update() {

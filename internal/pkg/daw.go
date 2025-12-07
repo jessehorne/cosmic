@@ -3,7 +3,9 @@ package pkg
 import (
 	"fmt"
 
+	gui "github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/jessehorne/cosmic/internal/pkg/ui"
 )
 
 const (
@@ -18,10 +20,13 @@ type (
 		PlayingSong      bool // playing pattern if false, song if true
 		MetronomeToggled bool // if the metronome should play during song
 
-		Metronome   metronome
-		PlayButton  button
-		PauseButton button
-		StopButton  button
+		Metronome     metronome
+		PlayButton    button
+		PauseButton   button
+		StopButton    button
+		AddStepButton button
+
+		Widgets []ui.Widget
 
 		PlayTime    float32 // current play time in seconds
 		BeatCounter float32
@@ -37,31 +42,62 @@ type (
 		Click()
 		SetToggle(w bool)
 	}
+
+	addStep interface {
+		Click()
+	}
 )
 
 func NewDAW() *DAW {
-	return &DAW{
+	d := &DAW{
 		BPM: 80,
+	}
+
+	playButton := ui.NewPlay(d)
+	pauseButton := ui.NewPause(d)
+	stopButton := ui.NewStop(d)
+	bpmCounter := ui.NewBpm(d)
+	which := ui.NewWhich(d)
+	m := ui.NewMetronome(d)
+	addStepButton := ui.NewAddStep()
+
+	hOrganizer := ui.NewOrganizer()
+
+	var widgets []ui.Widget
+	widgets = append(widgets, hOrganizer.AddWidget(playButton))
+	widgets = append(widgets, hOrganizer.AddWidget(pauseButton))
+	widgets = append(widgets, hOrganizer.AddWidget(stopButton))
+	widgets = append(widgets, hOrganizer.AddWidget(bpmCounter))
+	widgets = append(widgets, hOrganizer.AddWidget(which))
+	widgets = append(widgets, hOrganizer.AddWidget(m))
+	widgets = append(widgets, hOrganizer.AddWidget(addStepButton))
+	d.Widgets = widgets
+
+	d.Metronome = m
+	d.PlayButton = playButton
+	d.PauseButton = pauseButton
+	d.StopButton = stopButton
+	d.AddStepButton = addStepButton
+
+	hOrganizer.SimpleHorizontal()
+
+	return d
+}
+
+func (d *DAW) Close() {
+	for _, w := range d.Widgets {
+		w.Close()
 	}
 }
 
-func (d *DAW) SetMetronome(m metronome) {
-	d.Metronome = m
-}
-
-func (d *DAW) SetPlayButton(pb button) {
-	d.PlayButton = pb
-}
-
-func (d *DAW) SetPauseButton(pb button) {
-	d.PauseButton = pb
-}
-
-func (d *DAW) SetStopButton(sb button) {
-	d.StopButton = sb
-}
-
 func (d *DAW) Update() {
+	for _, w := range d.Widgets {
+		w.Update()
+		w.Draw()
+
+		gui.SetState(gui.STATE_NORMAL)
+	}
+	
 	if d.Playing {
 		if d.PlayTime == 0 {
 			d.TickMetronome()

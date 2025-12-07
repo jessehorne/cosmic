@@ -10,26 +10,36 @@ type doer interface {
 }
 
 type Skele struct {
-	X      int
-	Y      int
-	W      int
-	H      int
+	X      int32
+	Y      int32
+	W      int32
+	H      int32
 	Bounds rl.Rectangle
 	doer   doer
 }
 
 func NewSkele(p doer) *Skele {
-	return &Skele{
+	sk := &Skele{
 		X:    0,
 		Y:    0,
 		W:    30,
 		H:    30,
 		doer: p,
 	}
+	sk.UpdateBounds()
+	return sk
 }
 
 func (s *Skele) GetBounds() rl.Rectangle {
 	return s.Bounds
+}
+
+func (s *Skele) SetBounds(r rl.Rectangle) {
+	s.Bounds = r
+	s.X = int32(s.Bounds.X)
+	s.Y = int32(s.Bounds.Y)
+	s.W = int32(s.Bounds.Width)
+	s.H = int32(s.Bounds.Height)
 }
 
 func (s *Skele) UpdateBounds() {

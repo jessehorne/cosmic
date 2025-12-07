@@ -12,10 +12,10 @@ type switcher interface {
 }
 
 type Which struct {
-	X        int
-	Y        int
-	W        int
-	H        int
+	X        int32
+	Y        int32
+	W        int32
+	H        int32
 	Bounds   rl.Rectangle
 	Toggled  bool
 	switcher switcher
@@ -23,8 +23,6 @@ type Which struct {
 
 func NewWhich(s switcher) *Which {
 	w := &Which{
-		X:        150,
-		Y:        0,
 		W:        60,
 		H:        30,
 		switcher: s,
@@ -35,6 +33,14 @@ func NewWhich(s switcher) *Which {
 
 func (w *Which) GetBounds() rl.Rectangle {
 	return w.Bounds
+}
+
+func (w *Which) SetBounds(r rl.Rectangle) {
+	w.Bounds = r
+	w.X = int32(w.Bounds.X)
+	w.Y = int32(w.Bounds.Y)
+	w.W = int32(w.Bounds.Width)
+	w.H = int32(w.Bounds.Height)
 }
 
 func (w *Which) UpdateBounds() {

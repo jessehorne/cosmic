@@ -3,11 +3,9 @@ package main
 import (
 	"log"
 
-	gui "github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/jessehorne/cosmic/internal/pkg"
 	"github.com/jessehorne/cosmic/internal/pkg/save"
-	"github.com/jessehorne/cosmic/internal/pkg/ui"
 )
 
 const (
@@ -33,44 +31,16 @@ func main() {
 
 	daw := pkg.NewDAW()
 
-	playButton := ui.NewPlay(daw)
-	pauseButton := ui.NewPause(daw)
-	stopButton := ui.NewStop(daw)
-	bpmCounter := ui.NewBpm(daw)
-	which := ui.NewWhich(daw)
-	metronome := ui.NewMetronome(daw)
-
-	var widgets []ui.Widget
-	widgets = append(widgets, playButton)
-	widgets = append(widgets, pauseButton)
-	widgets = append(widgets, stopButton)
-	widgets = append(widgets, bpmCounter)
-	widgets = append(widgets, which)
-	widgets = append(widgets, metronome)
-
-	daw.SetMetronome(metronome)
-	daw.SetPlayButton(playButton)
-	daw.SetPauseButton(pauseButton)
-	daw.SetStopButton(stopButton)
-
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.Color{R: 0, G: 0, B: 0, A: 150})
 
 		daw.Update()
 
-		for _, w := range widgets {
-			w.Update()
-			w.Draw()
-
-			gui.SetState(gui.STATE_NORMAL)
-		}
 		rl.EndDrawing()
 	}
 
-	for _, w := range widgets {
-		w.Close()
-	}
+	daw.Close()
 
 	rl.CloseAudioDevice()
 	rl.CloseWindow()
