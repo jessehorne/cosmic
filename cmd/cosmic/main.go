@@ -37,6 +37,8 @@ func main() {
 	widgets = append(widgets, metronome)
 
 	daw.SetMetronome(metronome)
+	daw.SetPlayButton(playButton)
+	daw.SetStopButton(stopButton)
 
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()

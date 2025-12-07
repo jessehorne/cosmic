@@ -17,15 +17,23 @@ type (
 		Playing          bool
 		PlayingSong      bool // playing pattern if false, song if true
 		MetronomeToggled bool // if the metronome should play during song
-		Metronome        metronome
-		PlayTime         float32 // current play time in seconds
-		BeatCounter      float32
-		CurrentBeat      int
+
+		Metronome  metronome
+		PlayButton button
+		StopButton button
+
+		PlayTime    float32 // current play time in seconds
+		BeatCounter float32
+		CurrentBeat int
 	}
 
 	metronome interface {
 		Tick()
 		Reset()
+	}
+
+	button interface {
+		Click()
 	}
 )
 
@@ -37,6 +45,14 @@ func NewDAW() *DAW {
 
 func (d *DAW) SetMetronome(m metronome) {
 	d.Metronome = m
+}
+
+func (d *DAW) SetPlayButton(pb button) {
+	d.PlayButton = pb
+}
+
+func (d *DAW) SetStopButton(sb button) {
+	d.StopButton = sb
 }
 
 func (d *DAW) Update() {
@@ -57,6 +73,19 @@ func (d *DAW) Update() {
 
 		beatSize := float32(60 / d.BPM)
 		d.CurrentBeat = int(d.PlayTime / beatSize)
+	}
+
+	// check if user hit space bar
+	if rl.IsKeyPressed(rl.KeySpace) {
+		if d.Playing {
+			if d.StopButton != nil {
+				d.StopButton.Click()
+			}
+		} else {
+			if d.PlayButton != nil {
+				d.PlayButton.Click()
+			}
+		}
 	}
 }
 
