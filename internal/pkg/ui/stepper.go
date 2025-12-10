@@ -7,15 +7,20 @@ import (
 type Stepper struct {
 	*Core
 	Widgets map[string]Widget
+	Knobs   map[string]*Knob
 }
 
 func NewStepper() *Stepper {
-	panKnob := NewKnob(5, 5, 20, 20, 50)
-	volumeKnob := NewKnob(5, 30, 20, 20, 100)
+	panKnob := NewKnob(5, 5, 20, 20, 50, func(int) {})
+	volumeKnob := NewKnob(5, 30, 20, 20, 100, func(int) {})
 
 	return &Stepper{
 		Core: NewCore(rl.NewRectangle(0, 0, float32(rl.GetScreenWidth()), 100)),
 		Widgets: map[string]Widget{
+			"pan":    panKnob,
+			"volume": volumeKnob,
+		},
+		Knobs: map[string]*Knob{
 			"pan":    panKnob,
 			"volume": volumeKnob,
 		},

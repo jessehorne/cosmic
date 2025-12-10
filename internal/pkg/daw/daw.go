@@ -20,6 +20,8 @@ type (
 		BeatCounter float32
 		CurrentBeat int
 
+		Volume int
+
 		tickMetronomeCallback  func()
 		resetMetronomeCallback func()
 	}

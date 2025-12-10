@@ -21,6 +21,7 @@ type (
 		PauseButton   button
 		StopButton    button
 		AddStepButton button
+		VolumeKnob    *Knob
 
 		Widgets  []Widget
 		Steppers []*Stepper
@@ -154,6 +155,10 @@ func NewApp() *App {
 
 	timing := NewTiming(a.DAW, a.GetFont())
 
+	volumeKnob := NewKnob(0, 0, 30, 30, 100, func(v int) {
+		a.DAW.Volume = v
+	})
+
 	var widgets []Widget
 	widgets = append(widgets, hOrganizer.AddWidget(playButton))
 	widgets = append(widgets, hOrganizer.AddWidget(pauseButton))
@@ -163,6 +168,7 @@ func NewApp() *App {
 	widgets = append(widgets, hOrganizer.AddWidget(m))
 	widgets = append(widgets, hOrganizer.AddWidget(addStepButton))
 	widgets = append(widgets, hOrganizer.AddWidget(timing))
+	widgets = append(widgets, hOrganizer.AddWidget(volumeKnob))
 	a.Widgets = widgets
 
 	a.Metronome = m
@@ -195,7 +201,7 @@ func (a *App) Run() {
 	for _, w := range a.Widgets {
 		w.Close()
 	}
-	
+
 	rl.UnloadFont(*a.Font)
 	rl.CloseAudioDevice()
 	rl.CloseWindow()

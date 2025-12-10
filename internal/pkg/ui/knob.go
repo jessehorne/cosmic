@@ -2,6 +2,7 @@ package ui
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/jessehorne/cosmic/internal/pkg/color"
 )
 
 const (
@@ -12,18 +13,20 @@ const (
 
 type Knob struct {
 	*Core
-	Value         int // should always be 1-100
-	DefaultValue  int
-	IsDown        bool       // if the knob is pressed down
-	ValueWhenDown int        // the value when the mouse was clicked down
-	StartMousePos rl.Vector2 // start of mouse position when user clicked knob
+	Value            int // should always be 1-100
+	DefaultValue     int
+	IsDown           bool       // if the knob is pressed down
+	ValueWhenDown    int        // the value when the mouse was clicked down
+	StartMousePos    rl.Vector2 // start of mouse position when user clicked knob
+	setValueCallback func(int)
 }
 
-func NewKnob(x, y, w, h float32, value int32) *Knob {
+func NewKnob(x, y, w, h float32, value int32, onSetValue func(int)) *Knob {
 	return &Knob{
-		Core:         NewCore(rl.NewRectangle(x, y, w, h)),
-		Value:        int(value),
-		DefaultValue: int(value),
+		Core:             NewCore(rl.NewRectangle(x, y, w, h)),
+		Value:            int(value),
+		DefaultValue:     int(value),
+		setValueCallback: onSetValue,
 	}
 }
 
@@ -44,6 +47,7 @@ func (k *Knob) SetValue(i int) {
 		return
 	}
 	k.Value = i
+	k.setValueCallback(k.Value)
 }
 
 func (k *Knob) Click() {
@@ -92,15 +96,15 @@ func (k *Knob) Update() {
 func (k *Knob) Draw() {
 	x, y, w, h := k.UnpackInt32()
 	// draw background square
-	rl.DrawRectangle(x, y, w, h, rl.Gray)
+	rl.DrawRectangleLinesEx(k.GetAdjustedBounds(), 1, color.LightestBlue)
 
 	// draw knob circle
 	centerX := x + (w / 2)
 	centerY := y + (h / 2)
-	rl.DrawCircle(centerX, centerY, float32(w-12), rl.White)
+	rl.DrawCircle(centerX, centerY, float32(w/2-4), rl.White)
 
 	// draw rotated rectangle to show value
-	rec := rl.NewRectangle(float32(centerX), float32(centerY), 10, 3)
+	rec := rl.NewRectangle(float32(centerX), float32(centerY), float32(w/2-4), 3)
 	origin := rl.NewVector2(0, 1.5)
 	var currentRot float32 = (225+45)*(float32(k.Value)/100) + 135
 	rl.DrawRectanglePro(rec, origin, currentRot, rl.Blue)
