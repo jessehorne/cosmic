@@ -43,6 +43,7 @@ func (b *Button) Draw() {
 	if gui.Button(b.Bounds, gui.IconText(b.Icon, "")) {
 		b.Click()
 	}
+	gui.SetState(gui.STATE_NORMAL)
 }
 
 func (b *Button) Close() {

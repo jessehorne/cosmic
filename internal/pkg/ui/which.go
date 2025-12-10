@@ -2,23 +2,22 @@ package ui
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/jessehorne/cosmic/internal/pkg/color"
+	"github.com/jessehorne/cosmic/internal/pkg/daw"
 )
-
-type switcher interface {
-	TogglePlayingSong()
-	Stop()
-}
 
 type Which struct {
 	*Core
-	Toggled  bool
-	switcher switcher
+	Toggled bool // if toggled is true, Song, if false, Pattern
+	daw     *daw.DAW
+	font    *rl.Font
 }
 
-func NewWhich(s switcher) *Which {
+func NewWhich(d *daw.DAW, f *rl.Font) *Which {
 	return &Which{
-		Core:     NewCore(rl.NewRectangle(0, 0, 60, 30)),
-		switcher: s,
+		Core: NewCore(rl.NewRectangle(0, 0, 60, 30)),
+		daw:  d,
+		font: f,
 	}
 }
 
@@ -28,8 +27,8 @@ func (w *Which) GetCore() *Core {
 
 func (w *Which) Click() {
 	w.Toggled = !w.Toggled
-	w.switcher.TogglePlayingSong()
-	w.switcher.Stop()
+	w.daw.TogglePlayingSong()
+	w.daw.Stop()
 }
 
 func (w *Which) Update() {
@@ -42,36 +41,21 @@ func (w *Which) Update() {
 }
 
 func (w *Which) Draw() {
-	x, y, width, h := w.Core.UnpackInt32()
-
-	// first circle
-	rad := h / 2
-	centerY := y + rad
-	startX := x + rad
-	rl.DrawCircle(startX, centerY, float32(rad), rl.Gray)
-
-	// second circle
-	startX2 := x + width - rad
-	rl.DrawCircle(startX2, centerY, float32(rad), rl.Gray)
+	x, y, width, height := w.Core.UnpackInt32()
+	pad := int32(3)
+	buttonSize := height - pad*2
 
 	// draw background rectangle
-	rectWidth := startX2 - startX
-	rl.DrawRectangle(startX, y, rectWidth, h, rl.Gray)
+	rl.DrawRectangleLinesEx(w.Core.GetAdjustedBounds(), 1, color.LightestBlue)
 
 	if w.Toggled {
-		// draw toggle button on right side with background rect showing toggled
-		rl.DrawCircle(startX+2, centerY, float32(rad-2), rl.SkyBlue)
-
-		rl.DrawRectangle(startX+2, y+2, rectWidth-4, h-4,
-			rl.SkyBlue)
-
-		rl.DrawCircle(startX2-2, centerY, float32(rad-2), rl.White)
-
-		rl.DrawText("S", startX2-5, centerY-5, 14, rl.Black)
+		rl.DrawRectangle(x+pad, y+pad, width-pad*2, height-pad*2, color.DarkBlue)
+		rl.DrawRectangle(x+width-buttonSize-pad, y+height-buttonSize-pad, buttonSize, buttonSize, rl.White)
+		rl.DrawTextEx(*w.font, "S", rl.NewVector2(float32(x+width-buttonSize-pad)+7, float32(y+height-buttonSize-pad)), 24, 1, rl.Black)
 	} else {
 		// draw toggle button on left side
-		rl.DrawCircle(startX+2, centerY, float32(rad-2), rl.White)
-		rl.DrawText("P", startX-2, centerY-5, 14, rl.Black)
+		rl.DrawRectangle(x+pad, y+pad, buttonSize, buttonSize, rl.White)
+		rl.DrawTextEx(*w.font, "P", rl.NewVector2(float32(x+pad)+7, float32(y+pad)), 24, 1, rl.Black)
 	}
 }
 

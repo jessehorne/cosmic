@@ -3,10 +3,12 @@ package ui
 import (
 	gui "github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/jessehorne/cosmic/internal/pkg/daw"
 )
 
 type bpmSetter interface {
 	SetBPM(v int)
+	GetFont() *rl.Font
 }
 
 const (
@@ -18,15 +20,15 @@ const (
 
 type Bpm struct {
 	*Core
-	Value     int32
-	bpmSetter bpmSetter
+	Value int32
+	daw   *daw.DAW
 }
 
-func NewBpm(bpm bpmSetter) *Bpm {
+func NewBpm(d *daw.DAW) *Bpm {
 	return &Bpm{
-		Core:      NewCore(rl.NewRectangle(0, 0, 60, 30)),
-		bpmSetter: bpm,
-		Value:     80,
+		Core:  NewCore(rl.NewRectangle(0, 0, 60, 30)),
+		daw:   d,
+		Value: 80,
 	}
 }
 
@@ -55,7 +57,7 @@ func (b *Bpm) IncrementBPM(up, multi bool) {
 	if b.Value < minBPM || b.Value > maxBPM {
 		b.Value = oldValue
 	}
-	b.bpmSetter.SetBPM(int(b.Value))
+	b.daw.SetBPM(int(b.Value))
 }
 
 func (b *Bpm) Update() {

@@ -5,12 +5,14 @@ import (
 )
 
 type Organizer struct {
-	Widgets []Widget
+	Widgets  []Widget
+	PaddingX int
 }
 
 func NewOrganizer() *Organizer {
 	return &Organizer{
-		Widgets: []Widget{},
+		Widgets:  []Widget{},
+		PaddingX: 5,
 	}
 }
 
@@ -24,6 +26,6 @@ func (o *Organizer) SimpleHorizontal() {
 	for _, w := range o.Widgets {
 		b := w.GetCore().Bounds
 		w.GetCore().SetBounds(rl.NewRectangle(lastX, b.Y, b.Width, b.Height))
-		lastX += b.X + b.Width
+		lastX += b.X + b.Width + float32(o.PaddingX)
 	}
 }

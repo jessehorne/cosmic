@@ -3,16 +3,14 @@ package ui
 import (
 	gui "github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/jessehorne/cosmic/internal/pkg/color"
+	"github.com/jessehorne/cosmic/internal/pkg/daw"
 )
-
-type toggler interface {
-	ToggleMetronome()
-}
 
 type Metronome struct {
 	*Core
 	Toggled bool
-	toggler toggler
+	daw     *daw.DAW
 
 	// Ticking decides if at the current moment, the metronome is showing a "tick"
 	// a "tick" in this case is if the color of an active metronome is changed
@@ -26,12 +24,12 @@ type Metronome struct {
 	Sound2 rl.Sound
 }
 
-func NewMetronome(t toggler) *Metronome {
+func NewMetronome(d *daw.DAW) *Metronome {
 	return &Metronome{
-		Core:    NewCore(rl.NewRectangle(0, 0, 30, 30)),
-		toggler: t,
-		Sound1:  rl.LoadSound("data/metronome-1.ogg"),
-		Sound2:  rl.LoadSound("data/metronome-2.ogg"),
+		Core:   NewCore(rl.NewRectangle(0, 0, 30, 30)),
+		daw:    d,
+		Sound1: rl.LoadSound("data/metronome-1.ogg"),
+		Sound2: rl.LoadSound("data/metronome-2.ogg"),
 	}
 }
 
@@ -41,7 +39,7 @@ func (m *Metronome) GetCore() *Core {
 
 func (m *Metronome) Click() {
 	m.Toggled = !m.Toggled
-	m.toggler.ToggleMetronome()
+	m.daw.ToggleMetronome()
 }
 
 func (m *Metronome) Update() {
@@ -66,13 +64,13 @@ func (m *Metronome) Update() {
 
 func (m *Metronome) Draw() {
 	x, y, w, h := m.Core.UnpackInt32()
-	rl.DrawRectangle(x, y, w, h, rl.Gray)
+	rl.DrawRectangleLines(x, y, w, h, color.LightestBlue)
 	if m.Toggled {
-		color := rl.SkyBlue
+		c := color.DarkBlue
 		if m.Ticking {
-			color = rl.White
+			c = rl.White
 		}
-		rl.DrawRectangle(x+2, y+2, w-4, h-4, color)
+		rl.DrawRectangle(x+2, y+2, w-4, h-4, c)
 	}
 	gui.Label(
 		rl.NewRectangle(float32(x+6), float32(y), float32(w), float32(h)),
