@@ -2,6 +2,7 @@ package daw
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/jessehorne/cosmic/internal/pkg/music"
 )
 
 const (
@@ -22,14 +23,17 @@ type (
 
 		Volume int
 
-		tickMetronomeCallback  func()
+		TimeSig *music.TimeSignature
+
+		tickMetronomeCallback  func(w bool)
 		resetMetronomeCallback func()
 	}
 )
 
-func NewDAW(tmCallback func(), rmCallback func()) *DAW {
+func NewDAW(tmCallback func(w bool), rmCallback func()) *DAW {
 	d := &DAW{
 		BPM:                    80,
+		TimeSig:                music.NewTimeSignature(),
 		tickMetronomeCallback:  tmCallback,
 		resetMetronomeCallback: rmCallback,
 	}
@@ -44,22 +48,33 @@ func (d *DAW) Close() {
 func (d *DAW) Update() {
 	if d.Playing {
 		if d.PlayTime == 0 {
-			d.TickMetronome()
+			d.Tick(true)
+		}
+
+		beatSize := 60 / float32(d.BPM)
+		d.CurrentBeat = int(d.PlayTime / beatSize)
+
+		if d.CurrentBeat >= d.TimeSig.Numerator {
+			d.PlayTime = 0
+			d.BeatCounter = 0
+			d.CurrentBeat = 0
+			return
+		}
+
+		// tick the metronome once per beat
+		if d.BeatCounter >= 60.0/float32(d.BPM) {
+			d.Tick(false)
+			d.BeatCounter = 0
 		}
 
 		// increment play time, beat counter and current beat
 		d.PlayTime += rl.GetFrameTime()
 		d.BeatCounter += rl.GetFrameTime()
-
-		// tick the metronome once per beat
-		if d.BeatCounter >= 60.0/float32(d.BPM) {
-			d.TickMetronome()
-			d.BeatCounter = 0
-		}
-
-		beatSize := float32(60 / d.BPM)
-		d.CurrentBeat = int(d.PlayTime / beatSize)
 	}
+}
+
+func (d *DAW) UpdateTimeSignature(ts *music.TimeSignature) {
+	d.TimeSig = ts
 }
 
 func (d *DAW) GetBPM() int {
@@ -100,6 +115,10 @@ func (d *DAW) ToggleMetronome() {
 	d.MetronomeToggled = !d.MetronomeToggled
 }
 
-func (d *DAW) TickMetronome() {
-	d.tickMetronomeCallback()
+func (d *DAW) Tick(w bool) {
+	d.TickMetronome(w)
+}
+
+func (d *DAW) TickMetronome(w bool) {
+	d.tickMetronomeCallback(w)
 }

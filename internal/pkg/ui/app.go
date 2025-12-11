@@ -5,6 +5,7 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/jessehorne/cosmic/internal/pkg/color"
 	"github.com/jessehorne/cosmic/internal/pkg/daw"
+	"github.com/jessehorne/cosmic/internal/pkg/music"
 )
 
 const (
@@ -30,7 +31,7 @@ type (
 	}
 
 	metronome interface {
-		Tick()
+		Tick(w bool)
 		Reset()
 	}
 
@@ -71,11 +72,11 @@ func NewApp() *App {
 		Font: &font,
 	}
 
-	tickMetronome := func() {
+	tickMetronome := func(w bool) {
 		if a.Metronome == nil {
 			return
 		}
-		a.Metronome.Tick()
+		a.Metronome.Tick(w)
 	}
 
 	resetMetronome := func() {
@@ -136,7 +137,9 @@ func NewApp() *App {
 	)
 	bpmCounter := NewBpm(a.DAW)
 
-	which := NewWhich(a.DAW, a.GetFont())
+	which := NewWhich(a.DAW, a.GetFont(), func(w bool) {
+		a.DAW.PlayingSong = w // false means pattern, true means song
+	})
 	m := NewMetronome(a.DAW)
 
 	addStepButton := NewButton(
@@ -153,7 +156,9 @@ func NewApp() *App {
 		},
 	)
 
-	timing := NewTiming(a.DAW, a.GetFont())
+	timing := NewTiming(a.DAW, a.GetFont(), func(ts *music.TimeSignature) {
+		a.DAW.UpdateTimeSignature(ts)
+	})
 
 	volumeKnob := NewKnob(0, 0, 30, 30, 100, func(v int) {
 		a.DAW.Volume = v

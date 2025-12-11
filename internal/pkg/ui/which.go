@@ -8,16 +8,18 @@ import (
 
 type Which struct {
 	*Core
-	Toggled bool // if toggled is true, Song, if false, Pattern
-	daw     *daw.DAW
-	font    *rl.Font
+	Toggled  bool // if toggled is true, Song, if false, Pattern
+	daw      *daw.DAW
+	font     *rl.Font
+	callback func(bool)
 }
 
-func NewWhich(d *daw.DAW, f *rl.Font) *Which {
+func NewWhich(d *daw.DAW, f *rl.Font, c func(w bool)) *Which {
 	return &Which{
-		Core: NewCore(rl.NewRectangle(0, 0, 60, 30)),
-		daw:  d,
-		font: f,
+		Core:     NewCore(rl.NewRectangle(0, 0, 60, 30)),
+		daw:      d,
+		font:     f,
+		callback: c,
 	}
 }
 
@@ -29,6 +31,7 @@ func (w *Which) Click() {
 	w.Toggled = !w.Toggled
 	w.daw.TogglePlayingSong()
 	w.daw.Stop()
+	w.callback(w.Toggled)
 }
 
 func (w *Which) Update() {

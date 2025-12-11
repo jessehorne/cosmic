@@ -77,20 +77,15 @@ func (m *Metronome) Draw() {
 		gui.IconText(gui.ICON_CLOCK, ""))
 }
 
-func (m *Metronome) Tick() {
+func (m *Metronome) Tick(w bool) {
 	m.Ticking = true
 
 	if m.Toggled {
-		if m.TickSoundCounter == 0 {
+		if w {
 			rl.PlaySound(m.Sound2)
 		} else {
 			rl.PlaySound(m.Sound1)
 		}
-	}
-
-	m.TickSoundCounter += 1
-	if m.TickSoundCounter > 3 {
-		m.TickSoundCounter = 0
 	}
 }
 

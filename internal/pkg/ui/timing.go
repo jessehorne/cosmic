@@ -8,17 +8,19 @@ import (
 
 type Timing struct {
 	*Core
-	TimeSig *music.TimeSignature
-	daw     *daw.DAW
-	font    *rl.Font
+	TimeSig  *music.TimeSignature
+	daw      *daw.DAW
+	font     *rl.Font
+	callback func(*music.TimeSignature) // called when time signature changes
 }
 
-func NewTiming(d *daw.DAW, f *rl.Font) *Timing {
+func NewTiming(d *daw.DAW, f *rl.Font, callback func(*music.TimeSignature)) *Timing {
 	return &Timing{
-		Core:    NewCore(rl.NewRectangle(0, 0, 60, 30)),
-		TimeSig: music.NewTimeSignature(),
-		daw:     d,
-		font:    f,
+		Core:     NewCore(rl.NewRectangle(0, 0, 60, 30)),
+		TimeSig:  music.NewTimeSignature(),
+		daw:      d,
+		font:     f,
+		callback: callback,
 	}
 }
 
@@ -40,9 +42,11 @@ func (t *Timing) Update() {
 			if rl.GetMousePosition().X < adjBounds.X+(adjBounds.Width/2) {
 				// affecting numerator
 				t.TimeSig.IncrementNumerator(int(scroll), 1)
+				t.callback(t.TimeSig)
 			} else {
 				// affecting denominator
 				t.TimeSig.IncrementDenominator(int(scroll), 1)
+				t.callback(t.TimeSig)
 			}
 		}
 	}
