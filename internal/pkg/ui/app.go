@@ -146,9 +146,9 @@ func NewApp() *App {
 		rl.NewRectangle(0, 0, 30, 30),
 		gui.ICON_STEP_INTO,
 		func() {
-			newStepper := NewStepper()
+			newStepper := NewStepper(a.DAW)
 
-			startY := float32(50 + len(a.Steppers)*100 + 10)
+			startY := float32(50 + len(a.Steppers)*60 + 10)
 			newStepper.SetOrigin(rl.NewVector2(0, startY))
 
 			a.Widgets = append(a.Widgets, wOrganizer.AddWidget(newStepper))
@@ -158,6 +158,9 @@ func NewApp() *App {
 
 	timing := NewTiming(a.DAW, a.GetFont(), func(ts *music.TimeSignature) {
 		a.DAW.UpdateTimeSignature(ts)
+		for _, s := range a.Steppers {
+			s.PlaceSButtons()
+		}
 	})
 
 	volumeKnob := NewKnob(0, 0, 30, 30, 100, func(v int) {
